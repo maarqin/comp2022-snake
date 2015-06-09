@@ -43,7 +43,7 @@ public class Score extends JPanel
     * @return     void
     */
     public void subScore(int points){
-        this.score = this.score + points;
+        this.score = this.score - points;
     }
     
     /**
@@ -61,10 +61,10 @@ public class Score extends JPanel
             ge.registerFont(font);
             font = font.deriveFont(Font.PLAIN,36);
             g2d.setFont(font);
-        }catch (Exception e){
+        } catch (Exception e){
             System.out.println(e.toString());
         }   
-        g2d.drawString("Score: " + this.score, 600, 50);
+        g2d.drawString("Score:" + this.score, 630, 50);
     }
 
     /**

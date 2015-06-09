@@ -1,8 +1,8 @@
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.*;
+
 import javax.swing.*;
-import javax.swing.ImageIcon;
 /**
  * Write a description of class Snake here.
  * 
@@ -42,5 +42,5 @@ public class Snake extends JPanel
     public Image getImage() {
         return image;
     }
-
+    
 }

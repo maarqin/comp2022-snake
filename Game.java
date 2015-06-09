@@ -9,7 +9,6 @@ public class Game extends JFrame
     private static int WIDTH = 800;
     private static int HEIGHT = 600;
     
-    
     public Game(){
         
          // Adiciona o JPanel do jogo
@@ -29,7 +28,8 @@ public class Game extends JFrame
         setVisible(true);
         
     }
-    public static void main (String args[]){
+    
+    public static void main(String args[]){
         new Game();
     }
     
