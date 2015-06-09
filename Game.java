@@ -33,5 +33,4 @@ public class Game extends JFrame
         new Game();
     }
     
-    
 }

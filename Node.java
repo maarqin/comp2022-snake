@@ -1,4 +1,8 @@
 
+/**
+ * @author thomaz
+ * @version 2015-06-09
+ */
 public class Node {
 
 	private Snake data;

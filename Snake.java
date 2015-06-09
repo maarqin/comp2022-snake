@@ -6,7 +6,7 @@ import javax.swing.*;
 /**
  * Write a description of class Snake here.
  * 
- * @author (your name) 
+ * @author (your name)
  * @version (a version number or a date)
  */
 public class Snake extends JPanel
@@ -18,6 +18,7 @@ public class Snake extends JPanel
     private int x;
     private int y;
     private Image image;
+    
     
     public Snake() {
         ImageIcon ii = new ImageIcon("images/"+this.getClass().getResource(snake));

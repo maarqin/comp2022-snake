@@ -1,4 +1,9 @@
 
+/**
+ * @author thomaz
+ * @version 2015-06-09
+ * @param <E>
+ */
 public class Queue<E> {
     
     private Node head;
@@ -26,7 +31,7 @@ public class Queue<E> {
     }
     
     /**
-     * Removing the first element of list
+     * Removing the first element of the list
      * 
      */
     public void  remove() {

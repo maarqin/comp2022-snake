@@ -17,6 +17,7 @@ public class Score extends JPanel
     private int score;
     private Font font;
     
+    
     /**
      * Constructor for objects of class Score
      */
