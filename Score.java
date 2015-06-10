@@ -1,9 +1,5 @@
-import java.awt.EventQueue;
 import java.awt.*;
 import javax.swing.*;
-import java.net.URL;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
 import java.io.File;
 
 /**
@@ -12,8 +8,7 @@ import java.io.File;
  * @author mhadaniya
  * @version 20/05
  */
-public class Score extends JPanel
-{
+public class Score extends JPanel {
     private int score;
     private Font font;
     

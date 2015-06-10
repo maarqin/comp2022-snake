@@ -1,35 +1,40 @@
 import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.awt.*;
-
 import javax.swing.*;
+
 /**
  * Write a description of class Snake here.
  * 
  * @author (your name)
  * @version (a version number or a date)
  */
-public class Snake extends JPanel
-{
-    private String snake = "head.png";
+public class Snake extends JPanel {
+	private Snake last;
+	private String headFile = "head.png";
+    private String bodyFile = "body.png";
 
-    private int dx;
-    private int dy;
     private int x;
     private int y;
-    private Image image;
-    
+    private Image head;
+    private Image body;
     
     public Snake() {
-        ImageIcon ii = new ImageIcon("images/"+this.getClass().getResource(snake));
-        image = ii.getImage();
-        x = 40;
-        y = 60;
+    	this(0, 0);
     }
     
-    public void move() {
-        x += dx;
-        y += dy;
+    /**
+     * Main construct of this class
+     * 
+     * @param x
+     * @param y
+     */
+    public Snake(int x, int y) {
+//        ImageIcon h = new ImageIcon("images/"+this.getClass().getResource(headFile));
+//        head = h.getImage();
+//        
+//        ImageIcon b = new ImageIcon("images/"+this.getClass().getResource(bodyFile));
+//        body = b.getImage();        
+        this.x = x;
+        this.y = y;
     }
 
     public int getX() {
@@ -40,8 +45,57 @@ public class Snake extends JPanel
         return y;
     }
 
-    public Image getImage() {
-        return image;
-    }
+    /**
+     * Return an instance of this class
+     * 
+     * @return
+     */
+    public Snake getPosition() {
+		return new Snake(x, y);
+	}
     
+	/**
+	 * Return the head of the Snake
+	 * 
+	 * @return
+	 */
+	public Image getHead() {
+		return head;
+	}
+
+	/**
+	 * Obtain the pieces of the body
+	 * 
+	 * @return
+	 */
+	public Image getBody() {
+		return body;
+	}
+	
+    /**
+     * Return the last position of a {@link Snake}
+     * 
+     * @return
+     */
+    public Snake getLast() {
+		return last;
+	}
+
+	/**
+	 * Put a {@link Snake} in the last position
+	 * 
+	 * @param last
+	 */
+	public void setLast(Snake last) {
+		this.last = last;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.awt.Component#toString()
+	 */
+	public String toString(){
+		String ret = "x:[" + x + "]; y[" + y + "]\n";
+		return ret;
+	}
+	
 }

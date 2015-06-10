@@ -1,11 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class Game extends JFrame
-{
+public class Game extends JFrame {
 
-    private static int WIDTH = 800;
-    private static int HEIGHT = 600;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
     
     public Game(){
         

@@ -3,12 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import javax.swing.JPanel;
 import javax.swing.Timer;
-
 import java.io.File;
-import java.util.LinkedList;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -16,13 +13,14 @@ public class Board extends JPanel implements ActionListener {
     private Score score;
     private Font font;
     private boolean isPlaying = true;
-	private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
+	private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 10;
 	private int direction = DOWN;
-	private Point head;
-	public Queue<Node> tail = new Queue<Node>();
-       
+	private Snake head;
+	private int size = 10;
+	private Queue<Snake> body;
+	
     /**
-     * Construct of this class
+     * Construct of class
      * 
      */
     public Board() {
@@ -31,37 +29,55 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(Color.WHITE);
-
+        
+        timer = new Timer(50, this);
         score = new Score();
+        head = new Snake();
+        body = new Queue<Snake>();
         
-        head = new Point();
-        
-        timer = new Timer(400, this);
         timer.start();
-
     }
     
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
-        	
+    	
     	if( isPlaying ){
     		
+    		body.add(head);
     		
+    		int width = (int) (Game.WIDTH/SCALE);
+    		int height = (int) (Game.HEIGHT/SCALE);
     		
 	    	if( direction == RIGHT ){
 	    		
+	    		int x = head.getX();	
+	    		x = ( (x + 2) > width ) ? 0 : x + 1;
+	    		head = new Snake(x, head.getY());
+	    		
 	    	} else if ( direction == LEFT ){
+	    		
+	    		int x = head.getX();	
+	    		x = ( (x - 1) < 0 ) ? width-1 : x - 1;    		
+	    		head = new Snake(x, head.getY());
 	    		
 	    	} else if ( direction == UP ){
 	    		
+	    		int y = head.getY();	
+	    		y = ( (y - 1) < 0 ) ? height-3 : y - 1;
+	    		head = new Snake(head.getX(), y);
+	    		
 	    	} else {
 	    		
+	    		int y = head.getY();
+	    		y = ( (y + 4) > height ) ? 0 : y + 1;
+	    		head = new Snake(head.getX(), y);
 	    	}
     	}
     	
-    	
+    	if( Queue.length > size ) body.remove();    	
+
         repaint();  
     }
 
@@ -73,8 +89,20 @@ public class Board extends JPanel implements ActionListener {
         
         score.paintComponent(g);
         
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
+        
+        g2d.setColor(Color.RED);
 
+        // Drawing snake pieces 
+        Snake aux = body.getSnake();
+    	while (aux != null ) {
+    		g.fillRect(aux.getX() * SCALE, aux.getY() * SCALE, SCALE, SCALE);    		
+    		aux = aux.getLast();
+		}
+        g2d.setColor(Color.BLUE);
+		g.fillRect(head.getX() * SCALE, head.getY() * SCALE, SCALE, SCALE);
+		// End of drawing
+		
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
         

@@ -6,11 +6,11 @@
  */
 public class Queue<E> {
     
-    private Node head;
+	private Snake snake;
     public static int length;
     
     public Queue() {
-        this.head = null;
+        this.snake = null;
         length = 0;
     }
     
@@ -19,13 +19,13 @@ public class Queue<E> {
      * 
      * @param node
      */
-    public void add(Node node) {
+    public void add(Snake node) {
         if( isEmpty() ){
-            head = node;
-            head.setLast(null);
+        	snake = node;
+        	snake.setLast(null);
         } else {
-            node.setLast(head);
-            head = node;
+            node.setLast(snake);
+            snake = node;
         }
         length++;
     }
@@ -35,9 +35,9 @@ public class Queue<E> {
      * 
      */
     public void  remove() {
-        Node aux = head;
+    	Snake aux = snake;
         if( aux.getLast() == null ){
-            head = null;
+        	snake = null;
             return;
         }
         while( aux.getLast() != null ){
@@ -51,11 +51,20 @@ public class Queue<E> {
     }
     
     /**
+     * Return result until then
+     * 
+     * @return
+     */
+    public Snake getSnake() {
+		return snake;
+	}
+
+    /**
      * Verify if contain something in the list
      * 
      * @return
      */
     private boolean isEmpty() {
-        return ( head == null ) ? true : false;
+        return ( snake == null ) ? true : false;
     }
 }
