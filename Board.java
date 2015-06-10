@@ -40,6 +40,30 @@ public class Board extends JPanel implements ActionListener {
         timer.start();
 
     }
+    
+    /* (non-Javadoc)
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+    public void actionPerformed(ActionEvent e) {
+        	
+    	if( isPlaying ){
+    		
+    		
+    		
+	    	if( direction == RIGHT ){
+	    		
+	    	} else if ( direction == LEFT ){
+	    		
+	    	} else if ( direction == UP ){
+	    		
+	    	} else {
+	    		
+	    	}
+    	}
+    	
+    	
+        repaint();  
+    }
 
     /* (non-Javadoc)
      * @see javax.swing.JComponent#paint(java.awt.Graphics)
@@ -75,28 +99,6 @@ public class Board extends JPanel implements ActionListener {
             }   
             g2d.drawString("S N A K E: " + this.score, 300, 300);
         }
-    }
-    
-    /* (non-Javadoc)
-     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-     */
-    public void actionPerformed(ActionEvent e) {
-        	
-    	if( isPlaying ){
-    		
-	    	if( direction == RIGHT ){
-	    		
-	    	} else if ( direction == LEFT ){
-	    		
-	    	} else if ( direction == UP ){
-	    		
-	    	} else {
-	    		
-	    	}
-    	}
-    	
-    	
-        repaint();  
     }
     
     /**
