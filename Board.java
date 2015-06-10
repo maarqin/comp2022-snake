@@ -28,11 +28,11 @@ public class Board extends JPanel implements ActionListener {
         addKeyListener(new TAdapter());
         setFocusable(true);        
         setDoubleBuffered(true);
-        setBackground(Color.WHITE);
+        setBackground(new Color(146, 191, 2));
         
         timer = new Timer(50, this);
         score = new Score();
-        head = new Snake();
+        head = new Snake(40, 30);
         body = new Queue<Snake>();
         
         timer.start();
@@ -146,19 +146,24 @@ public class Board extends JPanel implements ActionListener {
             int key =  e.getKeyCode();
 
             switch (key){ 
-                case KeyEvent.VK_ENTER:
+	            case KeyEvent.VK_ENTER:
+	            case KeyEvent.VK_SPACE:
                 	isPlaying = !isPlaying;
                     break;
                 case KeyEvent.VK_RIGHT:
+                case KeyEvent.VK_D:
                 	if ( direction != LEFT ) direction = RIGHT;
                 	break;
                 case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_A:
             		if ( direction != RIGHT ) direction = LEFT;
                 	break;
                 case KeyEvent.VK_UP:
+                case KeyEvent.VK_W:
             		if ( direction != DOWN ) direction = UP;
                     break;
                 case KeyEvent.VK_DOWN:
+                case KeyEvent.VK_S:
             		if ( direction != UP ) direction = DOWN;
                     break;
             }
