@@ -94,7 +94,7 @@ public class Snake extends JPanel {
 	 * @see java.awt.Component#toString()
 	 */
 	public String toString(){
-		String ret = "x:[" + x + "]; y[" + y + "]\n";
+		String ret = "x[" + x + "]; y[" + y + "]\n";
 		return ret;
 	}
 	

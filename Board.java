@@ -9,15 +9,16 @@ import java.io.File;
 
 public class Board extends JPanel implements ActionListener {
 
-    private Timer timer;
-    private Score score;
+    private Timer timer = new Timer(50, this);
+    private Score score = new Score();
     private Font font;
     private boolean isPlaying = true;
+    private boolean over = false;
 	private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 10;
 	private int direction = DOWN;
 	private Snake head;
 	private int size = 10;
-	private Queue<Snake> body;
+	private Queue<Snake> body = new Queue<Snake>();
 	
     /**
      * Construct of class
@@ -29,14 +30,25 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(new Color(146, 191, 2));
-        
-        timer = new Timer(50, this);
-        score = new Score();
+
+        startNewGame();
+    }
+    
+    /**
+     * To initilize a new game
+     */
+    public void startNewGame() {
+    	
+    	score.resetScore();
+        isPlaying = true;
+        over = false;
+        direction = DOWN;
         head = new Snake(40, 30);
-        body = new Queue<Snake>();
+        body.removeAll();
         
         timer.start();
-    }
+	}
+    
     
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
@@ -73,7 +85,11 @@ public class Board extends JPanel implements ActionListener {
 	    		int y = head.getY();
 	    		y = ( (y + 4) > height ) ? 0 : y + 1;
 	    		head = new Snake(head.getX(), y);
+	    		
 	    	}
+	    	
+	    	// Test whether the snake collides with itself	
+    		over = iTsCollision(head);
     	}
     	
     	if( Queue.length > size ) body.remove();    	
@@ -103,11 +119,35 @@ public class Board extends JPanel implements ActionListener {
 		g.fillRect(head.getX() * SCALE, head.getY() * SCALE, SCALE, SCALE);
 		// End of drawing
 		
+		// Print a message to player
+		if( over ){
+			g2d.drawString("Game over", (int) (Game.WIDTH/2.4), (int) (Game.HEIGHT/2.4));
+		}
+		
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
         
     }
 
+    /**
+     * Method to check if node of head touch some piece of the snake
+     * 
+     * @return
+     */
+    private boolean iTsCollision(Snake head){
+    	
+        Snake aux = body.getSnake();
+    	while ( aux != null ) {
+    		if( (aux.getX() == head.getX()) 
+    				&& (aux.getY() == head.getY()) ){
+    			isPlaying = false;
+    			return true;
+    		}
+    		aux = aux.getLast();
+		}
+    	return false;
+    }
+    
     /**
      * @param g
      */
@@ -148,7 +188,11 @@ public class Board extends JPanel implements ActionListener {
             switch (key){ 
 	            case KeyEvent.VK_ENTER:
 	            case KeyEvent.VK_SPACE:
-                	isPlaying = !isPlaying;
+	            	if( over ) {
+	            		startNewGame();
+	            	} else {
+	            		isPlaying = !isPlaying;
+	            	}
                     break;
                 case KeyEvent.VK_RIGHT:
                 case KeyEvent.VK_D:

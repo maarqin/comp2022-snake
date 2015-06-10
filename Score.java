@@ -43,6 +43,13 @@ public class Score extends JPanel {
     }
     
     /**
+     * Reset score-to-zero
+     */
+    public void resetScore() {
+		this.score = 0;
+	}
+    
+    /**
     * Este método desenha o score 
     * 
     * @param  Graphics g    
@@ -60,7 +67,7 @@ public class Score extends JPanel {
         } catch (Exception e){
             System.out.println(e.toString());
         }   
-        g2d.drawString("Score:" + this.score, 630, 50);
+        g2d.drawString("Score:" + this.score, 25, 50);
     }
 
     /**

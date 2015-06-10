@@ -51,6 +51,14 @@ public class Queue<E> {
     }
     
     /**
+     * Crean all datas
+     */
+    public void removeAll() {
+        this.snake = null;
+        length = 0;
+    }
+    
+    /**
      * Return result until then
      * 
      * @return
