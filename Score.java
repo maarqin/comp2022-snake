@@ -62,12 +62,13 @@ public class Score extends JPanel {
             font = Font.createFont(Font.TRUETYPE_FONT, file);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            font = font.deriveFont(Font.PLAIN,36);
+            font = font.deriveFont(Font.PLAIN,25);
             g2d.setFont(font);
         } catch (Exception e){
             System.out.println(e.toString());
         }   
-        g2d.drawString("Score:" + this.score, 25, 50);
+        g2d.drawString("Score:" + this.score, 50, 52);
+        g2d.drawString("Lives:" + this.score, 630, 52);
     }
 
     /**

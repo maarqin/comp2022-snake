@@ -3,22 +3,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
 import java.io.File;
+import java.io.IOException;
 
 public class Board extends JPanel implements ActionListener {
 
-    private Timer timer = new Timer(50, this);
+    private Timer timer = new Timer(100, this);
     private Score score = new Score();
     private Font font;
     private boolean isPlaying = true;
     private boolean over = false;
-	private static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 10;
-	private int direction = DOWN;
+	public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 15;
+	private int direction;
 	private Snake head;
-	private int size = 10;
+	private int size = 15;
 	private Queue<Snake> body = new Queue<Snake>();
+	private BufferedImage img = null;
 	
     /**
      * Construct of class
@@ -30,6 +38,15 @@ public class Board extends JPanel implements ActionListener {
         setFocusable(true);        
         setDoubleBuffered(true);
         setBackground(new Color(146, 191, 2));
+        
+    	Object o = new Object();
+        String fileLoc = o.getClass().getResource("/images/scene.png").getPath();    	
+		try {
+			img = ImageIO.read(new File(fileLoc));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
         startNewGame();
     }
@@ -42,8 +59,8 @@ public class Board extends JPanel implements ActionListener {
     	score.resetScore();
         isPlaying = true;
         over = false;
-        direction = DOWN;
-        head = new Snake(40, 30);
+        direction = LEFT;
+        head = new Snake(27, 20, LEFT);
         body.removeAll();
         
         timer.start();
@@ -66,25 +83,25 @@ public class Board extends JPanel implements ActionListener {
 	    		
 	    		int x = head.getX();	
 	    		x = ( (x + 2) > width ) ? 0 : x + 1;
-	    		head = new Snake(x, head.getY());
-	    		
+	    		head = new Snake(x, head.getY(), RIGHT);
+
 	    	} else if ( direction == LEFT ){
 	    		
 	    		int x = head.getX();	
 	    		x = ( (x - 1) < 0 ) ? width-1 : x - 1;    		
-	    		head = new Snake(x, head.getY());
-	    		
+	    		head = new Snake(x, head.getY(), LEFT);
+
 	    	} else if ( direction == UP ){
 	    		
 	    		int y = head.getY();	
 	    		y = ( (y - 1) < 0 ) ? height-3 : y - 1;
-	    		head = new Snake(head.getX(), y);
+	    		head = new Snake(head.getX(), y, UP);
 	    		
 	    	} else {
 	    		
 	    		int y = head.getY();
 	    		y = ( (y + 4) > height ) ? 0 : y + 1;
-	    		head = new Snake(head.getX(), y);
+	    		head = new Snake(head.getX(), y, DOWN);
 	    		
 	    	}
 	    	
@@ -93,7 +110,7 @@ public class Board extends JPanel implements ActionListener {
     	}
     	
     	if( Queue.length > size ) body.remove();    	
-
+    	
         repaint();  
     }
 
@@ -102,31 +119,67 @@ public class Board extends JPanel implements ActionListener {
      */
     public void paint(Graphics g) {
         super.paint(g);
-        
-        score.paintComponent(g);
-        
+                
         Graphics2D g2d = (Graphics2D)g;
         
-        g2d.setColor(Color.RED);
+        // Paint scene back
+    	g2d.drawImage(img, 0, 0, null);
+        
+    	// Score and lives
+    	g2d.setColor(Color.WHITE);
 
-        // Drawing snake pieces 
+    	g2d.fillRect(44, 25, 130, 40);
+    	g2d.fillRect(625, 25, 130, 40);
+    	
+        score.paintComponent(g);
+                
+        // Drawing snake pieces and head
         Snake aux = body.getSnake();
     	while (aux != null ) {
-    		g.fillRect(aux.getX() * SCALE, aux.getY() * SCALE, SCALE, SCALE);    		
+    		g2d.drawImage(rotate(aux.getBody(), Snake.a[aux.getOrientation()]), aux.getX() * SCALE, aux.getY() * SCALE, null);
     		aux = aux.getLast();
 		}
-        g2d.setColor(Color.BLUE);
-		g.fillRect(head.getX() * SCALE, head.getY() * SCALE, SCALE, SCALE);
+    	
+    	int fixUpBugLeftAndDownX = 0, fixUpBugLeftAndDownY = 0;
+    	if( direction == LEFT ){
+    		fixUpBugLeftAndDownX = -10;
+    		fixUpBugLeftAndDownY = -15;
+    	}
+    	if( direction == DOWN ){
+    		fixUpBugLeftAndDownX = -10;
+    	}
+		g2d.drawImage(rotate(head.getHead(), Snake.a[head.getOrientation()]), (head.getX() * SCALE)+fixUpBugLeftAndDownX,
+				(head.getY() * SCALE)+fixUpBugLeftAndDownY, null);
 		// End of drawing
 		
 		// Print a message to player
 		if( over ){
-			g2d.drawString("Game over", (int) (Game.WIDTH/2.4), (int) (Game.HEIGHT/2.4));
+	        g2d.setColor(Color.YELLOW);			
+			g2d.drawString("Game over :(", (int) (Game.WIDTH/2.4), (int) (Game.HEIGHT/2.4));
+			g2d.drawString("Press [Space/Enter] to restart", (int) (Game.WIDTH/2.4) - 100, (int) (Game.HEIGHT/2.4) + 35);
 		}
 		
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
         
+    }
+    
+    /**
+     * Method to rotate an image
+     * 
+     * @param image
+     * @param angule
+     * @return
+     */
+    public static BufferedImage rotate( BufferedImage image, double angule ){
+
+    	double rotationRequired = Math.toRadians(angule);
+    	double locationX = image.getWidth() / 2;
+    	double locationY = image.getHeight() / 2;
+    	AffineTransform tx = AffineTransform.getRotateInstance(rotationRequired, locationX, locationY);
+    	AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+    	
+    	return op.filter(image, null);
     }
 
     /**
@@ -196,19 +249,19 @@ public class Board extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_RIGHT:
                 case KeyEvent.VK_D:
-                	if ( direction != LEFT ) direction = RIGHT;
+                	if ( direction != LEFT && isPlaying ) direction = RIGHT;
                 	break;
                 case KeyEvent.VK_LEFT:
                 case KeyEvent.VK_A:
-            		if ( direction != RIGHT ) direction = LEFT;
+            		if ( direction != RIGHT && isPlaying ) direction = LEFT;
                 	break;
                 case KeyEvent.VK_UP:
                 case KeyEvent.VK_W:
-            		if ( direction != DOWN ) direction = UP;
+            		if ( direction != DOWN && isPlaying ) direction = UP;
                     break;
                 case KeyEvent.VK_DOWN:
                 case KeyEvent.VK_S:
-            		if ( direction != UP ) direction = DOWN;
+            		if ( direction != UP && isPlaying ) direction = DOWN;
                     break;
             }
             

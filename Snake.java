@@ -1,4 +1,8 @@
-import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -8,17 +12,21 @@ import javax.swing.*;
  * @version (a version number or a date)
  */
 public class Snake extends JPanel {
-	private Snake last;
-	private String headFile = "head.png";
-    private String bodyFile = "body.png";
 
+	private Snake last;
+	private String headFile = "/images/head.png";
+    private String bodyFile = "/images/body.png";
+    public static final double[] a = {90, 270, 0, 180};
+    
     private int x;
     private int y;
-    private Image head;
-    private Image body;
+    private int orientation;
+    
+	private BufferedImage head = null;
+	private BufferedImage body = null;
     
     public Snake() {
-    	this(0, 0);
+    	this(0, 0, Board.DOWN);
     }
     
     /**
@@ -27,14 +35,24 @@ public class Snake extends JPanel {
      * @param x
      * @param y
      */
-    public Snake(int x, int y) {
-//        ImageIcon h = new ImageIcon("images/"+this.getClass().getResource(headFile));
-//        head = h.getImage();
-//        
-//        ImageIcon b = new ImageIcon("images/"+this.getClass().getResource(bodyFile));
-//        body = b.getImage();        
+    public Snake(int x, int y, int orientation) {
+    	
+    	Object o = new Object();
+        String h = o.getClass().getResource(this.headFile).getPath();
+        String b = o.getClass().getResource(this.bodyFile).getPath();
+        
+		try {
+			head = ImageIO.read(new File(h));
+			body = ImageIO.read(new File(b));
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
         this.x = x;
         this.y = y;
+        this.orientation = orientation;
     }
 
     public int getX() {
@@ -51,7 +69,7 @@ public class Snake extends JPanel {
      * @return
      */
     public Snake getPosition() {
-		return new Snake(x, y);
+		return new Snake(x, y, orientation);
 	}
     
 	/**
@@ -59,7 +77,7 @@ public class Snake extends JPanel {
 	 * 
 	 * @return
 	 */
-	public Image getHead() {
+	public BufferedImage getHead() {
 		return head;
 	}
 
@@ -68,7 +86,7 @@ public class Snake extends JPanel {
 	 * 
 	 * @return
 	 */
-	public Image getBody() {
+	public BufferedImage getBody() {
 		return body;
 	}
 	
@@ -90,6 +108,14 @@ public class Snake extends JPanel {
 		this.last = last;
 	}
 	
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.awt.Component#toString()
 	 */
