@@ -1,15 +1,15 @@
-package src;
+package game;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class Game extends JFrame {
 
-	private static final long serialVersionUID = 6349947094032773733L;
+	private static final long serialVersionUID = 2452445843043196771L;
 	public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     
@@ -35,16 +35,15 @@ public class Game extends JFrame {
     /**
      * Function response to load all images of project
      * 
-     * @param uri
+     * @param url
      * @return
      */
-    public static BufferedImage loadImages(String uri) {
+    public static BufferedImage loadImages(String url) {
     	BufferedImage img = null;
-
-    	Object o = new Object();
-        String file = o.getClass().getResource(uri).getPath();    	
-		try {
-			img = ImageIO.read(new File(file));
+    	
+    	URL file = Game.class.getResource(url);
+   		try {
+			img = ImageIO.read(file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

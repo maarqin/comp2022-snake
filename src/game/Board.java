@@ -1,4 +1,4 @@
-package src;
+package game;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.Random;
 
 /**
@@ -20,7 +20,7 @@ import java.util.Random;
  */
 public class Board extends JPanel implements ActionListener {
 
-	private static final long serialVersionUID = 393941167663041591L;
+	private static final long serialVersionUID = 2378608742839463516L;
 	private Timer timer = new Timer(100, this);
     private Score score = new Score();
     private Font font;
@@ -46,7 +46,7 @@ public class Board extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         setBackground(new Color(146, 191, 2));
         
-        img = Game.loadImages("/src/resources/images/scene.png");
+        img = Game.loadImages("/images/scene.png");
         
         startNewGame();
     }
@@ -239,7 +239,7 @@ public class Board extends JPanel implements ActionListener {
      * @param g2d
      */
     private void drawFries(Graphics2D g2d) {    	
-		g2d.drawImage(Game.loadImages("/src/resources/images/fries.png"), (int) fries.getX() * SCALE, (int)fries.getY() * SCALE, null);
+		g2d.drawImage(Game.loadImages("/images/fries.png"), (int) fries.getX() * SCALE, (int)fries.getY() * SCALE, null);
 	}
     
     /**
@@ -250,7 +250,7 @@ public class Board extends JPanel implements ActionListener {
             isPlaying = false;
             Graphics2D g2d = (Graphics2D) g;
             try{
-                File file = new File("fonts/VT323-Regular.ttf");
+            	InputStream file = Score.class.getResourceAsStream("/fonts/vt_regular.ttf");   	
                 font = Font.createFont(Font.TRUETYPE_FONT, file);
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 ge.registerFont(font);

@@ -1,4 +1,4 @@
-package src;
+package game;
 import java.awt.image.BufferedImage;
 
 import javax.swing.*;
@@ -11,10 +11,10 @@ import javax.swing.*;
  */
 public class Snake extends JPanel {
 
-	private static final long serialVersionUID = 7241913960835502733L;
+	private static final long serialVersionUID = 7671191111417041871L;
 	private Snake last;
-	private String headFile = "/src/resources/images/head.png";
-    private String bodyFile = "/src/resources/images/body.png";
+	private String headFile = "/images/head.png";
+    private String bodyFile = "/images/body.png";
     public static final double[] a = {90, 270, 0, 180};
     
     private int x;

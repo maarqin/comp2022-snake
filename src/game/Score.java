@@ -1,7 +1,9 @@
-package src;
+package game;
 import java.awt.*;
+
 import javax.swing.*;
-import java.io.File;
+
+import java.io.InputStream;
 
 /**
  * Classe JPanel do score que fica no canto superior direito do jogo.
@@ -11,7 +13,7 @@ import java.io.File;
  */
 public class Score extends JPanel {
 
-	private static final long serialVersionUID = -1222862708007593185L;
+	private static final long serialVersionUID = -5492621870251449988L;
 	private int score;
     private int life;
     private Font font;
@@ -69,13 +71,14 @@ public class Score extends JPanel {
     */
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-        try{
-            File file = new File("src/resources/fonts/vt_regular.ttf");
+        try{ 
+        	InputStream file = Score.class.getResourceAsStream("/fonts/vt_regular.ttf");
             font = Font.createFont(Font.TRUETYPE_FONT, file);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
             font = font.deriveFont(Font.PLAIN,25);
             g2d.setFont(font);
+            
         } catch (Exception e){
             System.out.println(e.toString());
         }   
