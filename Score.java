@@ -9,9 +9,10 @@ import java.io.File;
  * @version 20/05
  */
 public class Score extends JPanel {
-    private int score;
+
+	private int score;
+    private int life;
     private Font font;
-    
     
     /**
      * Constructor for objects of class Score
@@ -19,8 +20,8 @@ public class Score extends JPanel {
     public Score()
     {
         score = 0;
+        life = 0;
     }
-   
    
      /**
      * Este método soma o número de pontos ao score.
@@ -50,6 +51,15 @@ public class Score extends JPanel {
 	}
     
     /**
+     * Obtain the score actual
+     * 
+     * @return
+     */
+    public int getScore() {
+		return score;
+	}
+    
+    /**
     * Este método desenha o score 
     * 
     * @param  Graphics g    
@@ -68,7 +78,7 @@ public class Score extends JPanel {
             System.out.println(e.toString());
         }   
         g2d.drawString("Score:" + this.score, 50, 52);
-        g2d.drawString("Lives:" + this.score, 630, 52);
+        g2d.drawString("Lives:" + this.life, 630, 52);
     }
 
     /**

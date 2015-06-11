@@ -75,4 +75,5 @@ public class Queue<E> {
     private boolean isEmpty() {
         return ( snake == null ) ? true : false;
     }
+    
 }

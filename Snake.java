@@ -1,8 +1,5 @@
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 /**
@@ -37,19 +34,9 @@ public class Snake extends JPanel {
      */
     public Snake(int x, int y, int orientation) {
     	
-    	Object o = new Object();
-        String h = o.getClass().getResource(this.headFile).getPath();
-        String b = o.getClass().getResource(this.bodyFile).getPath();
-        
-		try {
-			head = ImageIO.read(new File(h));
-			body = ImageIO.read(new File(b));
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
+    	head = Game.loadImages(headFile);
+    	body = Game.loadImages(bodyFile);
+    	
         this.x = x;
         this.y = y;
         this.orientation = orientation;
@@ -108,10 +95,20 @@ public class Snake extends JPanel {
 		this.last = last;
 	}
 	
+	/**
+	 * Method to return an orientation
+	 * 
+	 * @return
+	 */
 	public int getOrientation() {
 		return orientation;
 	}
 
+	/**
+	 * Method to set an orientation
+	 * 
+	 * @param orientation
+	 */
 	public void setOrientation(int orientation) {
 		this.orientation = orientation;
 	}

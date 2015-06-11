@@ -7,13 +7,16 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Random;
 
+/**
+ * @author thomaz
+ *
+ */
 public class Board extends JPanel implements ActionListener {
 
     private Timer timer = new Timer(100, this);
@@ -24,9 +27,11 @@ public class Board extends JPanel implements ActionListener {
 	public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 15;
 	private int direction;
 	private Snake head;
-	private int size = 15;
+	private int size;
 	private Queue<Snake> body = new Queue<Snake>();
-	private BufferedImage img = null;
+	private BufferedImage img;
+	private Point fries;
+	public static final int LIM_ESQ = 3, LIM_CIM = 5, LIM_BAI = 35, LIM_DIR = 49;
 	
     /**
      * Construct of class
@@ -39,79 +44,74 @@ public class Board extends JPanel implements ActionListener {
         setDoubleBuffered(true);
         setBackground(new Color(146, 191, 2));
         
-    	Object o = new Object();
-        String fileLoc = o.getClass().getResource("/images/scene.png").getPath();    	
-		try {
-			img = ImageIO.read(new File(fileLoc));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+        img = Game.loadImages("/images/scene.png");
+        
         startNewGame();
     }
     
     /**
      * To initilize a new game
+     * 
      */
     public void startNewGame() {
     	
+    	timer.setDelay(100);
     	score.resetScore();
         isPlaying = true;
         over = false;
         direction = LEFT;
         head = new Snake(27, 20, LEFT);
+        size = 3;
         body.removeAll();
+        fries = Board.generatePlaceToFries();
         
         timer.start();
-	}
-    
+   	}
     
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
     	
-    	if( isPlaying ){
+    	if( isPlaying && !over ){
     		
     		body.add(head);
     		
-    		int width = (int) (Game.WIDTH/SCALE);
-    		int height = (int) (Game.HEIGHT/SCALE);
-    		
 	    	if( direction == RIGHT ){
+	    		head = new Snake(head.getX() + 1, head.getY(), RIGHT);
+	    		if( head.getX() > LIM_DIR ) over = true;
 	    		
-	    		int x = head.getX();	
-	    		x = ( (x + 2) > width ) ? 0 : x + 1;
-	    		head = new Snake(x, head.getY(), RIGHT);
-
-	    	} else if ( direction == LEFT ){
-	    		
-	    		int x = head.getX();	
-	    		x = ( (x - 1) < 0 ) ? width-1 : x - 1;    		
-	    		head = new Snake(x, head.getY(), LEFT);
+	    	} else if ( direction == LEFT ){    		
+	    		head = new Snake(head.getX() - 1, head.getY(), LEFT);
+	    		if( head.getX() < LIM_ESQ ) over = true;
 
 	    	} else if ( direction == UP ){
-	    		
-	    		int y = head.getY();	
-	    		y = ( (y - 1) < 0 ) ? height-3 : y - 1;
-	    		head = new Snake(head.getX(), y, UP);
-	    		
+	    		head = new Snake(head.getX(), head.getY() - 1, UP);
+	    		if( head.getY() < LIM_CIM ) over = true;
+
 	    	} else {
-	    		
-	    		int y = head.getY();
-	    		y = ( (y + 4) > height ) ? 0 : y + 1;
-	    		head = new Snake(head.getX(), y, DOWN);
-	    		
+	    		head = new Snake(head.getX(), head.getY() + 1, DOWN);
+	    		if( head.getY() > LIM_BAI ) over = true;
+
 	    	}
-	    	
+	    		    	
 	    	// Test whether the snake collides with itself	
-    		over = iTsCollision(head);
+	    	if( !over ) over = iTsCollision(head);
     	}
     	
     	if( Queue.length > size ) body.remove();    	
     	
-        repaint();  
+    	if( (fries.getX() == head.getX()) 
+    			&& (fries.getY() == head.getY()) 
+    			&& isPlaying ){
+    		size++;
+    		score.addScore(1);
+    		fries = Board.generatePlaceToFries();
+    		
+    		// Increases the speed of 5 in 5
+    		if( score.getScore() % 5 == 0 ) timer.setDelay(timer.getDelay() - 5);
+    	}
+        repaint();
     }
 
     /* (non-Javadoc)
@@ -126,10 +126,13 @@ public class Board extends JPanel implements ActionListener {
     	g2d.drawImage(img, 0, 0, null);
         
     	// Score and lives
-    	g2d.setColor(Color.WHITE);
-
     	g2d.fillRect(44, 25, 130, 40);
     	g2d.fillRect(625, 25, 130, 40);
+    	
+    	// Draw the fries
+    	drawFries(g2d);
+    	
+    	g2d.setColor(Color.WHITE);
     	
         score.paintComponent(g);
                 
@@ -200,6 +203,42 @@ public class Board extends JPanel implements ActionListener {
 		}
     	return false;
     }
+
+    /**
+     * Method to create new points (X, Y) in the garden
+     * 
+     * @return
+     */
+    private static Point generatePlaceToFries() {
+    	int x = 0, y = 0;
+    	
+    	Random a = new Random();
+    	do {
+    		int valor = a.nextInt(100);
+    		if( valor > LIM_ESQ 
+    				&& valor < LIM_DIR 
+    				&& x == 0 ){
+    			x = valor;
+    		}
+    		valor = a.nextInt(100);
+    		if( valor > LIM_CIM 
+    				&& valor < LIM_BAI
+    				&& y == 0 ){
+    			y = valor;
+    		}
+		} while ( x == 0 || y == 0 );
+    	
+    	return new Point(x, y);
+	}
+    
+    /**
+     * Draw fries at the jungle
+     * 
+     * @param g2d
+     */
+    private void drawFries(Graphics2D g2d) {    	
+		g2d.drawImage(Game.loadImages("/images/fries.png"), (int) fries.getX() * SCALE, (int)fries.getY() * SCALE, null);
+	}
     
     /**
      * @param g
@@ -226,7 +265,6 @@ public class Board extends JPanel implements ActionListener {
      * Class of keys
      * 
      * @author thomaz
-     *
      */
     private class TAdapter extends KeyAdapter {
 
