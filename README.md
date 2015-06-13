@@ -1,8 +1,6 @@
 #TRABALHO 2º BIMESTRE
 
-###SNAKE ![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/head.png "Head") 
-![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/body.png "Body") 
-![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/fries.png "Fries")
+###SNAKE ![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/head.png "Head") ![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/body.png "Body") ![alt text](https://github.com/maarqin/comp2022-snake/blob/mthomaz/resources/images/fries.png "Fries")
 
 Este trabalho do 2o bimestre, tem como objetivo, colocar em prática a utilização da estrutura de dados FILA. Para o trabalho ser realizado com sucesso, é importante que o aluno siga as instruções corretamente.
 
