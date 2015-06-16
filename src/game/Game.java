@@ -53,11 +53,10 @@ public class Game extends JFrame {
     
     /**
      * 
-     * 
      * @param args
      */
-    public static void main(String args[]){
-        new Game();
+    public static void main(String args[]) {
+    	new Game();
     }
     
 }

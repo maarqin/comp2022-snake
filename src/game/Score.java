@@ -3,7 +3,10 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import dao.DaoPlayers;
+
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Classe JPanel do score que fica no canto superior direito do jogo.
@@ -12,19 +15,18 @@ import java.io.InputStream;
  * @version 20/05
  */
 public class Score extends JPanel {
-
+	
 	private static final long serialVersionUID = -5492621870251449988L;
 	private int score;
     private int life;
     private Font font;
-    
+    private ArrayList<DaoPlayers> ranking;
+
     /**
      * Constructor for objects of class Score
      */
-    public Score()
-    {
-        score = 0;
-        life = 0;
+    public Score(){
+    	this.reset();
     }
    
      /**
@@ -46,14 +48,7 @@ public class Score extends JPanel {
     public void subScore(int points){
         this.score = this.score - points;
     }
-    
-    /**
-     * Reset score-to-zero
-     */
-    public void resetScore() {
-		this.score = 0;
-	}
-    
+
     /**
      * Obtain the score actual
      * 
@@ -61,6 +56,75 @@ public class Score extends JPanel {
      */
     public int getScore() {
 		return score;
+	}
+
+    /**
+     * Get quantity of lives
+     * 
+     * @return
+     */
+    public int getLives() {
+		return this.life;
+	}
+    
+    /**
+     * Set new ranking
+     * 
+     * @return
+     */
+    public void setRanking(ArrayList<DaoPlayers> ranking) {
+    	this.ranking = ranking;
+	}
+    
+    /**
+     * Get quantity of lives
+     * 
+     * @return
+     */
+    public void setLives(int life) {
+    	this.life += life;
+	}
+    
+    /**
+     * Reset data
+     */
+    public void reset() {
+    	score = 0;
+        life = 3;
+        ranking = DaoPlayers.getRecords();
+	}
+    
+    /**
+     * Draw ranking of the players
+     * 
+     */
+    public void doDrawRecords(Graphics g, boolean over) {
+        Graphics2D g2d = (Graphics2D) g;
+        
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(243, 100, 310, 370);
+        
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Ranking", 360, 140);
+        
+        int y = 180, position = 1;
+        int[] x = {260, 300, 460, 505};
+        
+        for (DaoPlayers player : ranking) {
+        	g2d.drawString(position + "º", x[0], y);
+        	g2d.drawString(player.getNick() + "", x[1], y);
+        	g2d.drawString(player.getScore() + "", x[2], y);
+        	g2d.drawString(player.getTime() + "", x[3], y);
+        	y += 30;
+        	position++;
+		}
+
+        // If player is died
+		if( over ){
+	        g2d.setColor(Color.YELLOW);			
+			g2d.drawString("Game over buddy :(", 320, (int) (Game.HEIGHT-110));
+			g2d.drawString("Press [Space/Enter] to restart", 250, (int) (Game.HEIGHT-80));
+		}
 	}
     
     /**

@@ -8,8 +8,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+
+import dao.DaoPlayers;
 
 import java.io.InputStream;
 import java.util.Random;
@@ -24,8 +27,9 @@ public class Board extends JPanel implements ActionListener {
 	private Timer timer = new Timer(100, this);
     private Score score = new Score();
     private Font font;
-    private boolean isPlaying = true;
-    private boolean over = false;
+    private boolean isPlaying;
+    private boolean over;
+    private boolean endLife;
 	public static final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, SCALE = 15;
 	private int direction;
 	private Snake head;
@@ -34,6 +38,7 @@ public class Board extends JPanel implements ActionListener {
 	private BufferedImage img;
 	private Point fries;
 	public static final int LIM_ESQ = 3, LIM_CIM = 5, LIM_BAI = 35, LIM_DIR = 49;
+	private long start, end;
 	
     /**
      * Construct of class
@@ -52,78 +57,119 @@ public class Board extends JPanel implements ActionListener {
     }
     
     /**
-     * To initilize a new game
+     * To initialize a new game
      * 
      */
     public void startNewGame() {
     	
     	timer.setDelay(100);
-    	score.resetScore();
-        isPlaying = true;
+    	score.reset();
+    	isPlaying = true;
         over = false;
+        endLife = false;
         direction = LEFT;
-        head = new Snake(27, 20, LEFT);
+        head = new Snake(LIM_DIR, LIM_BAI, LEFT);
         size = 3;
         body.removeAll();
         fries = Board.generatePlaceToFries();
+        start = System.currentTimeMillis();
         
         timer.start();
    	}
+    
+    /**
+     * Continue playing if exist life
+     * 
+     */
+    public void resetGame() {
+    	isPlaying = true;
+        over = false;
+        endLife = false;
+    	direction = LEFT;
+        head = new Snake(LIM_DIR, LIM_BAI, LEFT);
+        fries = Board.generatePlaceToFries();
+	}
     
     /* (non-Javadoc)
      * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
      */
     public void actionPerformed(ActionEvent e) {
     	
-    	if( isPlaying && !over ){
+    	if( isPlaying && !endLife ){
     		
     		body.add(head);
     		
 	    	if( direction == RIGHT ){
 	    		head = new Snake(head.getX() + 1, head.getY(), RIGHT);
-	    		if( head.getX() > LIM_DIR ) over = true;
+	    		if( head.getX() > LIM_DIR ) endLife = true;
 	    		
 	    	} else if ( direction == LEFT ){    		
 	    		head = new Snake(head.getX() - 1, head.getY(), LEFT);
-	    		if( head.getX() < LIM_ESQ ) over = true;
+	    		if( head.getX() < LIM_ESQ ) endLife = true;
 
 	    	} else if ( direction == UP ){
 	    		head = new Snake(head.getX(), head.getY() - 1, UP);
-	    		if( head.getY() < LIM_CIM ) over = true;
+	    		if( head.getY() < LIM_CIM ) endLife = true;
 
 	    	} else {
 	    		head = new Snake(head.getX(), head.getY() + 1, DOWN);
-	    		if( head.getY() > LIM_BAI ) over = true;
+	    		if( head.getY() > LIM_BAI ) endLife = true;
 
 	    	}
-	    		    	
-	    	// Test whether the snake collides with itself	
-	    	if( !over ) over = iTsCollision(head);
+	    	// Test whether the snake collides with itself
+	    	iTsCollision(head);
+	    	
+	    	// Core of the game
+	    	this.core();
+
+	    	// Always remove tail of the snake, this works to move its
+	    	if( Queue.length > size ) body.remove();    	
+	    	
+	    	// Found the French fries
+	    	if( (fries.getX() == head.getX()) 
+	    			&& (fries.getY() == head.getY()) 
+	    			&& isPlaying ){
+	    		size++;
+	    		score.addScore(1);
+	    		fries = Board.generatePlaceToFries();
+	    		
+	    		// Increases the speed of 5 in 5
+	    		if( score.getScore() % 5 == 0 ) timer.setDelay(timer.getDelay() - 5);
+	    		// Give one more life when is 30 score
+	    		if( score.getScore() % 30 == 0 ) score.setLives(1);
+	    	}
+	    	repaint();
     	}
     	
-    	if( Queue.length > size ) body.remove();    	
-    	
-    	if( (fries.getX() == head.getX()) 
-    			&& (fries.getY() == head.getY()) 
-    			&& isPlaying ){
-    		size++;
-    		score.addScore(1);
-    		fries = Board.generatePlaceToFries();
-    		
-    		// Increases the speed of 5 in 5
-    		if( score.getScore() % 5 == 0 ) timer.setDelay(timer.getDelay() - 5);
-    	}
-        repaint();
     }
 
     /* (non-Javadoc)
      * @see javax.swing.JComponent#paint(java.awt.Graphics)
      */
     public void paint(Graphics g) {
-        super.paint(g);
+    	// Method to optimize yet
+    	
+    	// Record new last score when game's over
+		if( over ){
+			end = System.currentTimeMillis();
+			long time = (end - start)/1000;
+			String nick = JOptionPane.showInputDialog(null, "Qual o seu nick?", "New score!", JOptionPane.INFORMATION_MESSAGE);
+			int total = score.getScore();
+			
+			DaoPlayers p = new DaoPlayers();
+			p.setNick(nick);
+			p.setScore(total);
+			p.setTime(time);
+			
+			if( !nick.equals("") ) DaoPlayers.doInsert(p);
+			
+			score.setRanking(DaoPlayers.getRecords());
+		}
+		
+    	super.paint(g);
                 
         Graphics2D g2d = (Graphics2D)g;
-        
+              
         // Paint scene back
     	g2d.drawImage(img, 0, 0, null);
         
@@ -157,12 +203,8 @@ public class Board extends JPanel implements ActionListener {
 				(head.getY() * SCALE)+fixUpBugLeftAndDownY, null);
 		// End of drawing
 		
-		// Print a message to player
-		if( over ){
-	        g2d.setColor(Color.YELLOW);			
-			g2d.drawString("Game over :(", (int) (Game.WIDTH/2.4), (int) (Game.HEIGHT/2.4));
-			g2d.drawString("Press [Space/Enter] to restart", (int) (Game.WIDTH/2.4) - 100, (int) (Game.HEIGHT/2.4) + 35);
-		}
+		// Print a message or/and ranking to player
+		if( !isPlaying ) score.doDrawRecords(g2d, over);
 		
         Toolkit.getDefaultToolkit().sync();
         g.dispose();
@@ -176,7 +218,7 @@ public class Board extends JPanel implements ActionListener {
      * @param angule
      * @return
      */
-    public static BufferedImage rotate( BufferedImage image, double angule ){
+    private static BufferedImage rotate( BufferedImage image, double angule ){
 
     	double rotationRequired = Math.toRadians(angule);
     	double locationX = image.getWidth() / 2;
@@ -192,18 +234,16 @@ public class Board extends JPanel implements ActionListener {
      * 
      * @return
      */
-    private boolean iTsCollision(Snake head){
+    private void iTsCollision(Snake head){
     	
         Snake aux = body.getSnake();
     	while ( aux != null ) {
     		if( (aux.getX() == head.getX()) 
     				&& (aux.getY() == head.getY()) ){
-    			isPlaying = false;
-    			return true;
+    			endLife = true;
     		}
     		aux = aux.getLast();
 		}
-    	return false;
     }
 
     /**
@@ -232,6 +272,23 @@ public class Board extends JPanel implements ActionListener {
     	
     	return new Point(x, y);
 	}
+    
+    /**
+     * Decides what to do with the game when "die"
+     * 
+     * @return
+     */
+    private void core(){
+    	
+    	if( endLife ){
+    		score.setLives(-1);
+    		if( score.getLives() == 0 ){
+    			over = true;
+    		}
+    		isPlaying = false;
+    	}
+	}
+
     
     /**
      * Draw fries at the jungle
@@ -276,8 +333,7 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             
             // Obtém o código da tecla
-            int key =  e.getKeyCode();
-
+            int key = e.getKeyCode();
             switch (key){ 
 	            case KeyEvent.VK_ENTER:
 	            case KeyEvent.VK_SPACE:
@@ -285,6 +341,7 @@ public class Board extends JPanel implements ActionListener {
 	            		startNewGame();
 	            	} else {
 	            		isPlaying = !isPlaying;
+	            		if( endLife ) resetGame();
 	            	}
                     break;
                 case KeyEvent.VK_RIGHT:
@@ -304,7 +361,6 @@ public class Board extends JPanel implements ActionListener {
             		if ( direction != UP && isPlaying ) direction = DOWN;
                     break;
             }
-            
         }
     }
     

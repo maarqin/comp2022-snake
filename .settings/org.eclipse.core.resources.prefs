@@ -1,4 +1,4 @@
 eclipse.preferences.version=1
-encoding/Board.java=UTF-8
-encoding/Game.java=UTF-8
-encoding/Score.java=UTF-8
+encoding//src/game/Board.java=UTF-8
+encoding//src/game/Game.java=UTF-8
+encoding//src/game/Score.java=UTF-8
