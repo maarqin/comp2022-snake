@@ -11,7 +11,7 @@ import javax.swing.*;
  */
 public class Snake extends JPanel {
 
-	private static final long serialVersionUID = 7671191111417041871L;
+	private static final long serialVersionUID = -3923206951075129344L;
 	private Snake last;
 	private String headFile = "/images/head.png";
     private String bodyFile = "/images/body.png";

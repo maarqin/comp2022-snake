@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class Score extends JPanel {
 	
-	private static final long serialVersionUID = -5492621870251449988L;
+	private static final long serialVersionUID = 8190305740368996871L;
 	private int score;
     private int life;
     private Font font;

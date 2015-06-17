@@ -23,7 +23,7 @@ import java.util.Random;
  */
 public class Board extends JPanel implements ActionListener {
 
-	private static final long serialVersionUID = 2378608742839463516L;
+	private static final long serialVersionUID = -5933370838331813168L;
 	private static final int SPEED = 100;
 	private Timer timer = new Timer(SPEED, this);
     private Score score = new Score();
@@ -197,7 +197,7 @@ public class Board extends JPanel implements ActionListener {
     	g2d.setColor(Color.WHITE);
     	
         score.paintComponent(g);
-                
+        
         // Drawing snake pieces and head
         Snake aux = body.getSnake();
     	while (aux != null ) {
