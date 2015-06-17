@@ -24,7 +24,8 @@ import java.util.Random;
 public class Board extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 2378608742839463516L;
-	private Timer timer = new Timer(100, this);
+	private static final int SPEED = 100;
+	private Timer timer = new Timer(SPEED, this);
     private Score score = new Score();
     private Font font;
     private boolean isPlaying;
@@ -39,6 +40,8 @@ public class Board extends JPanel implements ActionListener {
 	private Point fries;
 	public static final int LIM_ESQ = 3, LIM_CIM = 5, LIM_BAI = 35, LIM_DIR = 49;
 	private long start, end;
+	private boolean unLoop = false;
+	private boolean moved = true;
 	
     /**
      * Construct of class
@@ -62,12 +65,15 @@ public class Board extends JPanel implements ActionListener {
      */
     public void startNewGame() {
     	
-    	timer.setDelay(100);
+    	timer.setDelay(SPEED);
     	score.reset();
+    	
     	isPlaying = true;
         over = false;
         endLife = false;
         direction = LEFT;
+    	unLoop = false;
+    	moved = true;
         head = new Snake(LIM_DIR, LIM_BAI, LEFT);
         size = 3;
         body.removeAll();
@@ -86,6 +92,9 @@ public class Board extends JPanel implements ActionListener {
         over = false;
         endLife = false;
     	direction = LEFT;
+    	unLoop = false;
+    	moved = true;
+    	body.cleanAll();
         head = new Snake(LIM_DIR, LIM_BAI, LEFT);
         fries = Board.generatePlaceToFries();
 	}
@@ -138,8 +147,9 @@ public class Board extends JPanel implements ActionListener {
 	    		// Give one more life when is 30 score
 	    		if( score.getScore() % 30 == 0 ) score.setLives(1);
 	    	}
-	    	repaint();
+	    	moved = true;
     	}
+    	repaint();
     	
     }
 
@@ -150,7 +160,8 @@ public class Board extends JPanel implements ActionListener {
     	// Method to optimize yet
     	
     	// Record new last score when game's over
-		if( over ){
+		if( over && !unLoop ){
+			unLoop = true;
 			end = System.currentTimeMillis();
 			long time = (end - start)/1000;
 			String nick = JOptionPane.showInputDialog(null, "Qual o seu nick?", "New score!", JOptionPane.INFORMATION_MESSAGE);
@@ -161,8 +172,11 @@ public class Board extends JPanel implements ActionListener {
 			p.setScore(total);
 			p.setTime(time);
 			
-			if( !nick.equals("") ) DaoPlayers.doInsert(p);
+			// Save this nick
+			if( !nick.equals("") ||
+					!nick.equals(" ") ) DaoPlayers.doInsert(p);
 			
+			// Update the list of records
 			score.setRanking(DaoPlayers.getRecords());
 		}
 		
@@ -195,9 +209,10 @@ public class Board extends JPanel implements ActionListener {
     	if( direction == LEFT ){
     		fixUpBugLeftAndDownX = -10;
     		fixUpBugLeftAndDownY = -15;
-    	}
-    	if( direction == DOWN ){
+    	} else if( direction == DOWN ){
     		fixUpBugLeftAndDownX = -10;
+    	} else if( direction == UP ){
+    		fixUpBugLeftAndDownY = -10;
     	}
 		g2d.drawImage(rotate(head.getHead(), Snake.a[head.getOrientation()]), (head.getX() * SCALE)+fixUpBugLeftAndDownX,
 				(head.getY() * SCALE)+fixUpBugLeftAndDownY, null);
@@ -289,7 +304,6 @@ public class Board extends JPanel implements ActionListener {
     	}
 	}
 
-    
     /**
      * Draw fries at the jungle
      * 
@@ -333,34 +347,48 @@ public class Board extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             
             // Obtém o código da tecla
-            int key = e.getKeyCode();
-            switch (key){ 
-	            case KeyEvent.VK_ENTER:
-	            case KeyEvent.VK_SPACE:
-	            	if( over ) {
-	            		startNewGame();
-	            	} else {
-	            		isPlaying = !isPlaying;
-	            		if( endLife ) resetGame();
-	            	}
-                    break;
-                case KeyEvent.VK_RIGHT:
-                case KeyEvent.VK_D:
-                	if ( direction != LEFT && isPlaying ) direction = RIGHT;
-                	break;
-                case KeyEvent.VK_LEFT:
-                case KeyEvent.VK_A:
-            		if ( direction != RIGHT && isPlaying ) direction = LEFT;
-                	break;
-                case KeyEvent.VK_UP:
-                case KeyEvent.VK_W:
-            		if ( direction != DOWN && isPlaying ) direction = UP;
-                    break;
-                case KeyEvent.VK_DOWN:
-                case KeyEvent.VK_S:
-            		if ( direction != UP && isPlaying ) direction = DOWN;
-                    break;
-            }
+        	if( moved ){
+	            int key = e.getKeyCode();
+	            switch (key){ 
+		            case KeyEvent.VK_ENTER:
+		            case KeyEvent.VK_SPACE:
+		            	if( over ) {
+		            		startNewGame();
+		            	} else {
+		            		isPlaying = !isPlaying;
+		            		if( endLife ) resetGame();
+		            	}
+	                    break;
+	                case KeyEvent.VK_RIGHT:
+	                case KeyEvent.VK_D:
+	                	if ( direction != LEFT && isPlaying ) {
+	                		direction = RIGHT;
+	                		moved = false;
+	                	}
+	                	break;
+	                case KeyEvent.VK_LEFT:
+	                case KeyEvent.VK_A:
+	            		if ( direction != RIGHT && isPlaying ) {
+	            			direction = LEFT;
+	            			moved = false;
+	            		}
+	                	break;
+	                case KeyEvent.VK_UP:
+	                case KeyEvent.VK_W:
+	            		if ( direction != DOWN && isPlaying ) {
+	            			direction = UP;
+	            			moved = false;
+	            		}
+	                    break;
+	                case KeyEvent.VK_DOWN:
+	                case KeyEvent.VK_S:
+	            		if ( direction != UP && isPlaying ) {
+	            			direction = DOWN;
+	            			moved = false;
+	            		}
+	                    break;
+	            }
+        	}
         }
     }
     

@@ -48,8 +48,18 @@ public class Snake extends JPanel {
         return x;
     }
 
+    public Snake setX(int x) {
+        this.x = x;
+        return this;
+    }
+    
     public int getY() {
         return y;
+    }
+    
+    public Snake setY(int y) {
+        this.y = y;
+        return this;
     }
 
     /**

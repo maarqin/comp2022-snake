@@ -52,12 +52,28 @@ public class Queue<E> {
     }
     
     /**
-     * Crean all datas
+     * Remove all datas
      */
     public void removeAll() {
         this.snake = null;
         length = 0;
     }
+    
+    /**
+     * Hide tail' snake when it die
+     * 
+     */
+    public void cleanAll() {
+    	Snake aux = snake;
+        if( aux.getLast() == null ){
+        	snake.setX(-1).setY(-1);
+            return;
+        }
+        while( aux.getLast() != null ){
+        	aux.setX(-1).setY(-1);
+            aux = aux.getLast();
+        }
+	}
     
     /**
      * Return result until then
