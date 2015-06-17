@@ -173,7 +173,7 @@ public class Board extends JPanel implements ActionListener {
 			p.setTime(time);
 			
 			// Save this nick
-			if( !nick.equals("") ||
+			if( !nick.equals("") &&
 					!nick.equals(" ") ) DaoPlayers.doInsert(p);
 			
 			// Update the list of records

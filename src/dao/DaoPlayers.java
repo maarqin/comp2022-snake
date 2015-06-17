@@ -60,10 +60,11 @@ public class DaoPlayers {
 	 * @param p
 	 */
 	public static void doInsert(DaoPlayers p) {
-		conexao = ConexaoDev.getConexao();
 
 		int score = 0;
 		if( (score = hasInserted(p.getNick())) >= 0 ){
+			
+			conexao = ConexaoDev.getConexao();
 			
 			PreparedStatement stmt = null;
 			String sql = "UPDATE players SET day = ? WHERE nick = ?";
@@ -88,6 +89,8 @@ public class DaoPlayers {
 			
 		} else {
 		
+			conexao = ConexaoDev.getConexao();
+
 			PreparedStatement stmt = null;
 			
 			String sql = "INSERT INTO players (nick, score, time, day) VALUES (?,?,?,?)";
@@ -120,6 +123,8 @@ public class DaoPlayers {
 	 */
 	private static void doUpdate(DaoPlayers p, int score) {
 		if( p.getScore() > score ){
+			
+			conexao = ConexaoDev.getConexao();
 			
 			PreparedStatement stmt = null;
 			String sql = "UPDATE players SET score = ?, time = ? WHERE nick = ?";
@@ -166,7 +171,7 @@ public class DaoPlayers {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return 0;
+		return -1;
 	}
 
 	public String getNick() {
