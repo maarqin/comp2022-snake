@@ -142,15 +142,40 @@ public class Board extends JPanel implements ActionListener {
 	    		score.addScore(1);
 	    		fries = Board.generatePlaceToFries();
 	    		
-	    		// Increases the speed of 5 in 5
-	    		if( score.getScore() % 5 == 0 ) timer.setDelay(timer.getDelay() - 5);
-	    		// Give one more life when is 30 score
-	    		if( score.getScore() % 30 == 0 ) score.setLives(1);
+	    		int modDelay = 0, modLife = 0, delay = 0;
+	    		if( score.getScore() <= 60 ){
+    				modDelay = 5;
+    				modLife = 30;
+    				delay = -5;
+	    		} else if( score.getScore() <= 100 ){
+    				modDelay = 10;
+    				modLife = 20;
+    				delay = -3;
+	    		} else if( timer.getDelay() > 0 ){
+    				modDelay = 20;
+    				modLife = 10;
+    				delay = -2;
+	    		} else {
+    				modDelay = -1;
+    				modLife = 10;
+	    		}
+	    		
+    			if( score.getScore() % modDelay == 0 ) reDelay(delay);
+	    		if( score.getScore() % modLife == 0 ) score.setLives(1);
 	    	}
 	    	moved = true;
     	}
     	repaint();
     	
+    }
+    
+    /**
+     * Function to set new value to game's delay
+     * 
+     * @param sub
+     */
+    private void reDelay(int sub){
+    	timer.setDelay(timer.getDelay() + sub);
     }
 
     /* (non-Javadoc)
